@@ -12,10 +12,13 @@
    ningún módulo MTK.
 4. **Símbolos**: tabla `kallsyms` completa (184 347 símbolos) y lista filtrada
    de MTK/ruby en `extracted/symbols/`.
-5. **Kit Droidspaces**: fragmento de config seguro para kABI y los tres parches
+5. **Datos del dispositivo vivo** (root/APatch): FDT final con `__symbols__`,
+   6509 headers del build exacto (`kheaders`), `sched.h` real que confirma los
+   slots KABI 6/7/8 libres.
+6. **Kit Droidspaces**: fragmento de config seguro para kABI y los tres parches
    oficiales de slots reservados.
-6. **Pipeline reproducible**: `scripts/extract-release.sh` y
-   `.github/workflows/extract.yml` hacen todo lo anterior desde cero.
+7. **Pipeline reproducible**: `scripts/extract-release.sh`,
+   `scripts/dump-device.sh` y `.github/workflows/extract.yml`.
 
 ## El bloqueo
 

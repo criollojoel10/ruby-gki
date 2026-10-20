@@ -26,6 +26,8 @@ sin romper el ABI de los 78 módulos del vendor.
 | `extracted/dts/mt6877.dts` | DTB del SoC decompilado desde `boot.img`. |
 | `extracted/dts/ruby-dtbo.dts` | Overlay de ruby decompilado desde `dtbo.img`. |
 | `extracted/modules/` | 78 `.ko`, `modinfo`, `modules.dep`, `modules.alias`. |
+| `extracted/device/` | FDT vivo (con `__symbols__`), kheaders, kallsyms, notas del build. |
+| `extracted/headers/` | Headers reales del build: `sched.h`, IPC/PID ns, KABI, exports. |
 | `extracted/symbols/` | `kallsyms` completo + símbolos MTK/ruby filtrados. |
 | `extracted/config/` | Banner de versión, compilador y flags ausentes. |
 | `scripts/` | Extracción, build y reempaquetado de `boot.img`. |
@@ -74,6 +76,9 @@ kernel obliga a reconstruir esos drivers, no basta con reutilizar `.ko`.
 git clone --recurse-submodules https://github.com/criollojoel10/ruby-gki
 cd ruby-gki
 
+# 0. Extraer datos del dispositivo en marcha (opcional, requiere root+Termux)
+DUMP_PARTITIONS=1 ./scripts/dump-device.sh termux extracted/device
+
 # 1. Reproducir la extracción completa desde el release
 ./scripts/extract-release.sh rubyx-20261015
 
@@ -83,6 +88,20 @@ cd ruby-gki
 # 3. Comprobar requisitos Droidspaces en el dispositivo
 adb shell sh -c 'zcat /proc/config.gz' | ./scripts/check-droidspaces.sh -
 ```
+
+## Datos del dispositivo vivo
+
+Con root (APatch) se extrajeron además:
+
+- `extracted/device/fdt-live.dtb` (263 KB): Device Tree final con boot + dtbo
+  aplicados y nodo `__symbols__`.
+- `extracted/device/fdt-live-labeled.dts`: versión editable con referencias
+  `&label` restauradas.
+- `extracted/device/kheaders.tar.xz` (4.3 MB): 6509 headers del build exacto.
+- `extracted/headers/sched.h`: confirma que los slots KABI **6, 7 y 8 están
+  libres**, justo los que usa el parche Droidspaces por defecto.
+
+Detalle y método en [`docs/05-dispositivo.md`](docs/05-dispositivo.md).
 
 ## Droidspaces
 

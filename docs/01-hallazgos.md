@@ -112,3 +112,6 @@ integrados (`mt6877_pinctrl_probe`, `clk_mt6877_*`, `mt6877_devapc_probe`…).
 Es un kernel **GKI 6.6 moderno con el BSP MTK enlazado estáticamente**. No es
 un GKI puro con módulos de vendor: es un árbol MTK privado. Por eso el
 `boot.img` no se puede reconstruir solo con ACK + los `.ko` del release.
+
+Los datos del dispositivo en marcha (FDT final, kheaders, `sched.h`) están en
+[`05-dispositivo.md`](05-dispositivo.md).

@@ -1,0 +1,32 @@
+# Datos del dispositivo (ruby, Android 17)
+
+## Identidad
+ruby
+17
+37
+_a
+green
+enforcing
+
+## Kernel
+Linux version 6.6.127-android15-8-4k-gf18ad88fac49-dirty (nobody@android-build) (Android (15071444, +pgo, +bolt, +lto, +mlgo, based on r596125) clang version 22.0.2 (https://android.googlesource.com/toolchain/llvm-project de03d430485c884861198b25459851f429cbdbad), LLD 22.0.2 (/mnt/disks/build-disk/src/googleplex-android/llvm-r596125-release/out/llvm-project/llvm de03d430485c884861198b25459851f429cbdbad)) #5 SMP PREEMPT Wed Oct 14 19:20:13 UTC 2026
+
+## Cmdline
+console=tty0 console=ttyS0,921600n8 mtk_printk_ctrl.disable_uart=1 nokaslr clk_ignore_unused pd_ignore_unused bootconfig androidboot.tee_type=2 androidboot.init_fatal_reboot_target=recovery root=/dev/ram has_battery_removed=0 ramoops.mem_address=0x48090000 ramoops.mem_size=0xe0000 ramoops.pmsg_size=0x10000 ramoops.console_size=0x40000 loop.max_part=7 androidboot.boot_devices=bootdevice,soc/11230000.mmc,11230000.mmc,soc/11230000.msdc,11230000.msdc,soc/11270000.ufshci,11270000.ufshci androidboot.rsc=GL androidboot.panel_color=BLACK androidboot.oled_wp=01f2030000030104 panel-m16-42-0d-0a-dsc-vdo.oled_wp=01f2030000030104 ramoops.mem_address=0x48090000 ramoops.mem_size=0xe0000 ramoops.pmsg_size=0x10000 ramoops.console_size=0x40000 bootopt=64S3,32N2,64N2 androidboot.tee_type=2 root=/dev/ram androidboot.vbmeta.device=PARTUUID=1f9b0939-e16b-4bc9-a5bc-dc2ee969d801 androidboot.vbmeta.avb_version=1.2 androidboot.vbmeta.device_state=unlocked androidboot.veritymode=disabled androidboot.veritymode.managed=yes androidboot.slot_suffix=_a androidboot.slot=a androidboot.verifiedbootstate=orange androidboot.atm=disabled androidboot.force_normal_boot=1 androidboot.meta_log_disable=0 mtk_printk_ctrl.disable_uart=1 androidboot.serialno=vsqkkfojvsin6xor androidboot.hwlevel=MP androidboot.hwversion=1.19.0 androidboot.hwc=GL androidboot.product.hardware.sku=ruby  hwid.level=MP hwid.version=1.19.0 hwid.country=GL hwid.sku=ruby hwid.project_adc=544 hwid.build_adc=448 hwid.level=MP hwid.version=1.19.0 hwid.country=GL hwid.sku=ruby hwid.project_adc=544 hwid.build_adc=448 androidboot.bootreason=kernel_panic androidboot.secureboot=1 androidboot.dp=0x20 androidboot.chipid=0x15274aa8af239568c4238d554bf418b9 androidboot.cpuid=0x15274aa8af239568c4238d554bf418b9ae43c40ebabbc05dbc79e8ae gpt=1 usb2jtag_mode=0 androidboot.dtb_idx=0 androidboot.dtbo_idx=0 log_buf_len=2M
+
+## Cifrados
+boot_a   a6faa65f2405f29faf661bf5932e94959eb1f210b7f1e5043f08191e91abb2cf
+dtbo_a   73a095321e06565ac51dc79c7fa9275b2f199dc3e8772165c567d6545aee269f
+release  c9d6ad0d7e8921f708de65cbc71817d9bfb88f82c0768d87672f29a8000252aa  (boot.img suelto)
+payload  e8ea81bc6a5369e7b6b166c63a5ef5ec5be2c2f72d9e27e1d212df4bf30117ae  (boot del payload)
+kheaders fe8dbfe5e34359aa6be7358aca60b8020b8fb4951663ea233b13cf60e96ff1c6
+fdt      0fbb176446b20465530a9bc348930bbf0ed9da02074ec12c25b21c160cda1ac7
+
+## Particiones
+boot_a -> /dev/block/sdc32
+dtbo_a -> /dev/block/sdc35
+
+## Notas
+- boot_a tiene el kernel parcheado por APatch (hash distinto al release).
+- dtbo_a coincide con el dtbo del payload.
+- kptr_restrict=2: /proc/kallsyms oculta direcciones incluso para root.
