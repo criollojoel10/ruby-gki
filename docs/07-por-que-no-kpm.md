@@ -100,6 +100,91 @@ Además, `check_version` también valida `module_layout`; devolver 1 siempre
 desactiva esa comprobación. Si hay que depurar, comparar `modinfo` y
 `__versions` antes de parchear.
 
+## El `.ko` de `ipc/` en concreto: por qué no puede funcionar
+
+La propuesta de compilar `ipc/*.c` como `droidspaces_ipc.ko` y enganchar
+`do_exit`/`sys_call_table` falla en varios puntos independientes:
+
+1. **Los símbolos del núcleo no existen.** `kallsyms` del `Image` original:
+
+   ```
+   exit_sem          AUSENTE
+   shm_exit          AUSENTE
+   ipc_init          AUSENTE
+   ipc_ns_init       AUSENTE
+   init_ipc_ns       AUSENTE
+   ```
+
+   El módulo los declara `extern`; modpost los marca `undefined!` y `insmod`
+   falla con `Unknown symbol`. No se pueden enlazar funciones que el kernel no
+   compiló.
+
+2. **Las syscalls son stubs, no implementaciones.** `kernel/sys_ni.c`:
+
+   ```c
+   COND_SYSCALL(msgget);
+   ```
+
+   Eso genera `__arm64_sys_msgget` como alias **weak** de `sys_ni_syscall`
+   (comprobado: `W __arm64_sys_msgget` apunta a `T sys_ni_syscall`). Enganchar
+   la tabla a esas direcciones solo devuelve `-ENOSYS`.
+
+3. **`task_struct` del kernel vivo no tiene `sysvsem`.** Compilar el módulo con
+   `-DCONFIG_SYSVIPC=1` cambia la definición de `struct task_struct` **solo
+   para el módulo**; el kernel en ejecución se compiló sin esos campos. El
+   módulo leería offsets que en el kernel son otra cosa. Aplicar el parche
+   kABI a los headers no cambia el binario que está corriendo.
+
+4. **El parche kABI no aplica con `git apply`.** En ACK
+   `android15-6.6-2026-04_r31` falla:
+
+   ```
+   error: patch failed: include/linux/sched.h:1513
+   error: include/linux/sched.h: patch does not apply
+   ```
+
+   `git apply` es estricto con el fuzz; `patch -p1` sí aplica. El script
+   propuesto usa `git apply ... || echo "ya aplicado"`, así que **continuaría
+   sin parche** y sin avisar.
+
+5. **`ipc_init`/`ipc_ns_init` son `__init`.** Aunque se compilaran, su memoria
+   se libera al terminar el arranque; llamarlas desde un módulo es
+   use-after-free.
+
+6. **`Module.symvers` reconstruido no es un Module.symvers.** `__versions`
+   solo tiene los símbolos que cada `.ko` importa: 1439 únicos, 4124
+   referencias, 0 conflictos de CRC en los 78 módulos. Un Module.symvers real
+   contiene todos los exports y lo genera genksyms al compilar el kernel; no
+   se puede fabricar desde los `.ko`. Sirve para auditar, no para enlazar.
+
+7. **Aunque todo lo anterior funcionara, falta PID namespace.** En el kernel
+   vivo:
+
+   ```
+   $ ls /proc/self/ns/
+   cgroup mnt net time uts          # no hay pid, ipc ni user
+   $ unshare -i true                # Invalid argument
+   $ unshare -p -f true             # Invalid argument
+   $ unshare -U true                # Invalid argument
+   ```
+
+   Droidspaces exige PID e IPC namespace como *must-have*. Sin recompilar el
+   núcleo, el `check` seguirá fallando aunque exista `/proc/sysvipc`.
+
+## Auditoría correcta (lo que sí se puede hacer)
+
+`scripts/audit-modversions.py` extrae `vermagic` y los CRC de `__versions` de
+los 78 `.ko` (auditoría de ABI, detección de conflictos), sin presentarlo como
+un Module.symvers utilizable para enlazar. Resultado actual:
+
+```
+módulos: 78
+símbolos importados únicos: 1439
+referencias totales: 4124
+conflictos de CRC: 0
+vermagic: 6.6.127-android15-8-4k-gf18ad88fac49-dirty SMP preempt mod_unload modversions aarch64
+```
+
 ## Lo que sí es cierto de tu análisis
 
 - Los 78 `.ko` no van en `Image` (en ruby están en `vendor.img`, no en
