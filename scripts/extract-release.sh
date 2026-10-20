@@ -32,6 +32,10 @@ fi
 mkdir -p "$WORK/assets"
 while IFS=$'\t' read -r name url; do
   [ -n "$name" ] || continue
+  case "$name" in
+    boot.img|dtbo.img|vendor_boot.img|vendor_dlkm.img|*.zip) ;;
+    *) continue ;;
+  esac
   log "descargando $name"
   if have aria2c; then
     aria2c -q -x16 -s16 -k1M -c -d "$WORK/assets" -o "$name" "$url"
@@ -69,8 +73,12 @@ fi
 
 for name in boot dtbo vendor vendor_boot vendor_dlkm; do
   [ -f "$WORK/assets/$name.img" ] && cp "$WORK/assets/$name.img" "$WORK/parts/$name.img" 2>/dev/null || true
-  [ -f "$WORK/parts/$name.img" ] && cp "$WORK/parts/$name.img" "$OUT/$name.img"
 done
+if [ "${KEEP_IMAGES:-0}" = 1 ]; then
+  for name in boot dtbo vendor_boot vendor_dlkm; do
+    [ -f "$WORK/parts/$name.img" ] && cp "$WORK/parts/$name.img" "$OUT/" || true
+  done
+fi
 
 # ----------------------------------------------------------------- boot.img
 if [ -f "$WORK/parts/boot.img" ] && have unpack_bootimg; then
@@ -169,7 +177,9 @@ fi
 {
   echo "tag: $TAG"
   echo "fecha: $(date -u +%FT%TZ)"
-  [ -s "$OUT/config/kernel-version.txt" ] && cat "$OUT/config/kernel-version.txt"
+  if [ -s "$OUT/config/kernel-version.txt" ]; then
+    cat "$OUT/config/kernel-version.txt"
+  fi
   echo "defconfig: $(wc -l < "$OUT/config/ruby_defconfig" 2>/dev/null || echo 0) líneas"
   echo "ko: $(wc -l < "$OUT/modules/ko_list.txt" 2>/dev/null || echo 0)"
 } > "$OUT/summary.txt"
