@@ -49,6 +49,11 @@ page size       2048
 El DTB contiene dos fragmentos; el útil es `01_dtbdump_MT6877.dtb`
 (`compatible = "mediatek,mt6877","mediatek,MT6877"`).
 
+El `boot.img` suelto del release y el `boot` del payload tienen el **mismo
+kernel y el mismo DTB** (SHA-256 idénticos), pero **ramdisk distinto**: el
+release va reempaquetado (probablemente con el `overlay.d` de KernelSU o un
+ramdisk de recovery). Para el análisis de kernel es indiferente.
+
 ## dtbo.img
 
 Cabecera `d7b7ab1e`, 1 entrada de 76 799 B llamada `RUBY`; el resto del archivo

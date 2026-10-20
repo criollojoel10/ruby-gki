@@ -51,6 +51,12 @@ Si el dispositivo bootloopea con la variante por defecto, probar las otras dos.
 El kernel de ruby ya usa algunos slots para MTK, así que puede hacer falta una
 variante distinta.
 
+Comprobado contra ACK `android15-6.6-2026-04_r31` (6.6.127): las tres variantes
+aplican a `include/linux/sched.h`, con offset y algo de fuzz (el bloque de
+`ANDROID_KABI_RESERVE` está unas líneas más abajo). En el árbol MTK hay que
+revisar además que los slots elegidos no estén ocupados por
+`ANDROID_KABI_USE(...)` de MediaTek; si lo están, usar otra variante.
+
 ## Configuración
 
 ```sh
