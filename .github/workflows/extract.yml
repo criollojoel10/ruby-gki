@@ -1,0 +1,62 @@
+name: Extraer blueprint kernel 6.6
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Tag en RubyxLabs/releases"
+        required: true
+        default: "rubyx-20261015"
+
+permissions:
+  contents: read
+
+jobs:
+  extract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Liberar espacio
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk/ndk \
+                      /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
+          df -h /
+
+      - name: Instalar herramientas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            device-tree-compiler lz4 zstd unzip curl jq aria2 python3-pip \
+            kmod erofs-utils cpio bc bison flex libssl-dev libelf-dev git
+          pip3 install --break-system-packages extract-dtb vmlinux-to-elf
+
+          curl -fL -o /tmp/pdg.tar.gz \
+            https://github.com/ssut/payload-dumper-go/releases/download/2.1.0/payload-dumper-go_2.1.0_linux_amd64.tar.gz
+          tar -xzf /tmp/pdg.tar.gz -C /tmp payload-dumper-go
+          sudo install -m755 /tmp/payload-dumper-go /usr/local/bin/
+
+          git clone --depth=1 https://android.googlesource.com/platform/system/tools/mkbootimg /tmp/mkbootimg
+          sudo ln -sf /tmp/mkbootimg/unpack_bootimg.py /usr/local/bin/unpack_bootimg
+          sudo chmod +x /tmp/mkbootimg/unpack_bootimg.py
+
+      - name: Extraer release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/extract-release.sh "${{ inputs.release_tag }}" work/blueprint
+
+      - name: Resumen
+        run: |
+          cat work/blueprint/summary.txt
+          echo "### Blueprint" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat work/blueprint/summary.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruby-kernel-6.6-blueprint
+          path: work/blueprint
+          if-no-files-found: error
+          retention-days: 30

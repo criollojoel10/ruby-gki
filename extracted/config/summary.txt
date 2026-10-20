@@ -1,0 +1,7 @@
+Kernel: 6.6.127-android15-8-4k-gf18ad88fac49-dirty
+Built: Wed Oct 14 19:20:13 UTC 2026
+Compiler: Android clang 22.0.2 (r596125) / LLD 22.0.2
+Config: 8626 lines, GKI android15-8, 4K pages
+Modules: 78 (all generic GKI, 0 MTK)
+DTB: 179139 bytes, 877 nodes
+DTBO: 76799 bytes, 517 nodes

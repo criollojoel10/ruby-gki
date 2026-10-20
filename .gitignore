@@ -1,0 +1,9 @@
+dl/
+work/
+out/
+out-*/
+*.img
+*.zip
+*.tar.gz
+*.log
+tools/

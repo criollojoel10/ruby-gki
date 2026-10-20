@@ -1,0 +1,78 @@
+name: Compilar kernel (experimental)
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_repo:
+        description: "URL del árbol MTK 6.6 (vacío = ACK, no booteable en ruby)"
+        required: false
+        default: ""
+      source_ref:
+        description: "Rama/tag del árbol"
+        required: false
+        default: "lineage-24.0"
+      patch_variant:
+        description: "Variante kABI SYSVIPC"
+        type: choice
+        options: ["6_7_8", "3_4_5", "1_2_3"]
+        default: "6_7_8"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Liberar espacio
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk/ndk \
+                      /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
+          df -h /
+
+      - name: Instalar toolchain y dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            clang lld llvm bc bison flex cpio libssl-dev libelf-dev \
+            device-tree-compiler lz4 zstd git python3
+          clang --version | head -1
+
+      - name: Compilar
+        env:
+          SRC: ${{ inputs.source_repo }}
+          REF: ${{ inputs.source_ref }}
+          VARIANT: ${{ inputs.patch_variant }}
+        run: |
+          ARGS=(--ref "$REF" --out out
+                --patch "droidspaces/patches/001.GKI-below-6.12-fix_sysvipc_kabi_${VARIANT}.patch")
+          if [ -n "$SRC" ]; then
+            ARGS+=(--source "$SRC")
+          else
+            ARGS+=(--ack)
+            echo "::warning::Sin source_repo se compila ACK: NO es flasheable en ruby"
+          fi
+          ./scripts/build-kernel.sh "${ARGS[@]}"
+
+      - name: Empaquetar
+        run: |
+          {
+            echo "### Build"
+            echo '```'
+            cat out/build-info.txt 2>/dev/null || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ruby-kernel-image
+          path: |
+            out/Image.gz
+            out/boot-droidspaces.img
+            out/build-info.txt
+            out/config.final
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,78 @@
+/vendor/lib/modules/kunit-example-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/nhc_ipv6.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/nhc_udp.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/pps_core.ko:
+/vendor/lib/modules/usbserial.ko:
+/vendor/lib/modules/nhc_hop.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/virtio_pci_legacy_dev.ko:
+/vendor/lib/modules/open-dice.ko:
+/vendor/lib/modules/ftdi_sio.ko: /vendor/lib/modules/usbserial.ko
+/vendor/lib/modules/cdc_ncm.ko: /vendor/lib/modules/cdc_ether.ko /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/can-bcm.ko: /vendor/lib/modules/can.ko
+/vendor/lib/modules/soc-utils-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/bpf_preload.ko:
+/vendor/lib/modules/fat_test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/hidp.ko:
+/vendor/lib/modules/rtl8150.ko:
+/vendor/lib/modules/r8152.ko: /vendor/lib/modules/mii.ko
+/vendor/lib/modules/nhc_routing.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/iio-test-format.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/nhc_mobility.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/asix.ko: /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/virtio_blk.ko:
+/vendor/lib/modules/hid-uclogic-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/can-dev.ko:
+/vendor/lib/modules/ptp.ko: /vendor/lib/modules/pps_core.ko
+/vendor/lib/modules/8021q.ko:
+/vendor/lib/modules/regmap-kunit.ko: /vendor/lib/modules/regmap-raw-ram.ko /vendor/lib/modules/regmap-ram.ko /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/regmap-raw-ram.ko:
+/vendor/lib/modules/nhc_fragment.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/6lowpan.ko:
+/vendor/lib/modules/cdc_eem.ko: /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/9pnet_fd.ko: /vendor/lib/modules/9pnet.ko
+/vendor/lib/modules/time_test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/virtio_console.ko:
+/vendor/lib/modules/lib_test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/mac802154.ko: /vendor/lib/modules/ieee802154.ko
+/vendor/lib/modules/cdc_ether.ko: /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/usbnet.ko: /vendor/lib/modules/mii.ko
+/vendor/lib/modules/vmw_vsock_virtio_transport.ko:
+/vendor/lib/modules/r8153_ecm.ko: /vendor/lib/modules/r8152.ko /vendor/lib/modules/cdc_ether.ko /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/nhc_dest.ko: /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/btqca.ko:
+/vendor/lib/modules/ieee802154_socket.ko: /vendor/lib/modules/ieee802154.ko
+/vendor/lib/modules/hci_uart.ko: /vendor/lib/modules/btqca.ko /vendor/lib/modules/btbcm.ko
+/vendor/lib/modules/aqc111.ko: /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/kheaders.ko:
+/vendor/lib/modules/usbmon.ko:
+/vendor/lib/modules/tipc.ko:
+/vendor/lib/modules/ieee802154.ko:
+/vendor/lib/modules/can.ko:
+/vendor/lib/modules/dev_addr_lists_test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/virtio_pci.ko: /vendor/lib/modules/virtio_pci_legacy_dev.ko /vendor/lib/modules/virtio_pci_modern_dev.ko
+/vendor/lib/modules/macsec.ko:
+/vendor/lib/modules/regmap-ram.ko:
+/vendor/lib/modules/btbcm.ko:
+/vendor/lib/modules/rfcomm.ko:
+/vendor/lib/modules/gzvm.ko:
+/vendor/lib/modules/ieee802154_6lowpan.ko: /vendor/lib/modules/ieee802154.ko /vendor/lib/modules/6lowpan.ko
+/vendor/lib/modules/wwan.ko:
+/vendor/lib/modules/soc-topology-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/cdc-acm.ko:
+/vendor/lib/modules/ax88179_178a.ko: /vendor/lib/modules/usbnet.ko /vendor/lib/modules/mii.ko
+/vendor/lib/modules/9pnet.ko:
+/vendor/lib/modules/ext4-inode-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/vcan.ko: /vendor/lib/modules/can-dev.ko
+/vendor/lib/modules/can-raw.ko: /vendor/lib/modules/can.ko
+/vendor/lib/modules/kunit.ko:
+/vendor/lib/modules/kunit-test.ko: /vendor/lib/modules/kunit.ko
+/vendor/lib/modules/can-gw.ko: /vendor/lib/modules/can.ko
+/vendor/lib/modules/vcpu_stall_detector.ko:
+/vendor/lib/modules/btsdio.ko:
+/vendor/lib/modules/diag.ko: /vendor/lib/modules/tipc.ko
+/vendor/lib/modules/virtio_balloon.ko:
+/vendor/lib/modules/virtio_pci_modern_dev.ko:
+/vendor/lib/modules/nfc.ko:
+/vendor/lib/modules/slcan.ko: /vendor/lib/modules/can-dev.ko
+/vendor/lib/modules/mii.ko:
+/vendor/lib/modules/ptp_kvm.ko: /vendor/lib/modules/ptp.ko /vendor/lib/modules/pps_core.ko

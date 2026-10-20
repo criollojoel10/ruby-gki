@@ -1,0 +1,50 @@
+# Droidspaces sobre GKI 6.6 — fragmento seguro para kABI
+#
+# Fuente: ravindu644/Droidspaces-OSS, Documentation/Kernel-Configuration.md
+# ("GKI kernels", paso 2). Aplicar SIEMPRE el parche kABI antes de compilar:
+#   droidspaces/patches/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
+#
+# No activar CFS_BANDWIDTH ni CGROUP_PIDS: redimensionan task_struct y
+# cgroup, cambian el CRC de miles de símbolos exportados y el vendor deja de
+# cargar sus módulos (bootloop). No hay parche de padding para eso.
+
+# IPC
+CONFIG_SYSVIPC=y
+CONFIG_POSIX_MQUEUE=y
+
+# Namespaces
+CONFIG_IPC_NS=y
+CONFIG_PID_NS=y
+
+# Hardware access
+CONFIG_DEVTMPFS=y
+
+# Red: NAT con aislamiento
+CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y
+
+# --- Opcionales recomendadas ---
+
+# Docker: evita el error "unsafe procfs"
+CONFIG_USER_NS=y
+
+# NAT IPv6 (NAT66)
+CONFIG_IP6_NF_NAT=y
+CONFIG_IP6_NF_TARGET_MASQUERADE=y
+
+# Modo --net=macvlan (auto-contenido, no mueve ABI)
+CONFIG_MACVLAN=y
+
+# UFW
+CONFIG_NETFILTER_XT_TARGET_REJECT=y
+CONFIG_NETFILTER_XT_TARGET_LOG=y
+CONFIG_NETFILTER_XT_MATCH_RECENT=y
+
+# Fail2ban
+CONFIG_IP_SET=y
+CONFIG_IP_SET_HASH_IP=y
+CONFIG_IP_SET_HASH_NET=y
+CONFIG_NETFILTER_XT_SET=y
+
+# NixOS / xattrs en tmpfs
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_TMPFS_XATTR=y

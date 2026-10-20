@@ -1,0 +1,4 @@
+[submodule "kernel/common"]
+	path = kernel/common
+	url = https://android.googlesource.com/kernel/common
+	branch = android15-6.6
