@@ -24,7 +24,7 @@
 
 `ruby` no usa el layout GKI "boot + vendor_boot + vendor_dlkm". Su `Image` de
 53 MB lleva **todos los drivers MTK built-in**. El release no incluye el árbol
-fuente con el que se compiló, y ese árbol no es público:
+fuente con el que se compiló, y ese árbol exacto no es público:
 
 | Fuente pública | Versión | ¿Sirve? |
 |---|---|---|
@@ -32,6 +32,7 @@ fuente con el que se compiló, y ese árbol no es público:
 | `RubyxLabs/kernel_xiaomi_mt6877` (`lineage-23.2`) | 4.19 | No |
 | `DXRN-MoonWake/aeron_kernel_xiaomi_ruby` | 4.19.325 | No |
 | AOSP `kernel/common` `android15-6.6-2026-04_r31` | 6.6.127 | Solo el núcleo GKI; sin drivers MTK |
+| **`HelloVolla/android_kernel_volla_mt6877`** + **`..._device_modules_volla_mt6877`** | **6.6.89 (MTK 6.6 de MT6877)** | **Sí: misma plataforma, drivers MTK de 6.6** |
 
 El `BoardConfig.mk` del device lo confirma:
 
@@ -48,6 +49,34 @@ Ese `kernel/xiaomi/mt6877` de la rama `lineage-24.0` no está publicado. Sin él
 - no se puede habilitar `PID_NS`/`IPC_NS` por módulo ni por KPM, porque el
   código no está en el binario;
 - los 78 `.ko` del vendor no aportan ningún driver de plataforma.
+
+### Estado real a 2026-10-22 (ver `rubyx-kernel66-lab/docs/91-*`)
+
+El bloqueo se ha reencuadrado gracias a dos hallazgos:
+
+1. **El árbol MTK 6.6 de MT6877 sí es público** (el de Volla): GKI 6.6.89 +
+   device modules de MTK para MT6877 con TEEI 400/510/515, `mediatek_v2`,
+   focaltech por SPI, carga de MTK y el DTS `mt6877.dts`. Y el árbol que ya
+   usa el laboratorio (`UN1CA/kernel_samsung_a34x`) **es** la plataforma
+   MTK 6.6 de MT6877: el A34 5G es un Exynos 1380 = MT6877V, y su
+   `kernel_device_modules-6.6` es el árbol de device modules de MTK (TEEI,
+   mediatek_v2, mt6359p, carga MTK, focaltech, goodix, GT9xx).
+2. **El Device Tree no hay que portarlo**: el DTB 6.6 de ruby ya está
+   extraído (`work/dtb_boot/01_dtbdump_MT6877.dtb`) y el overlay sigue en la
+   partición `dtbo`.
+
+Lo que falta, por tanto, son los drivers **propios del board de ruby**:
+
+| Driver | Origen del port |
+|---|---|
+| panel `m16_36_02_0b` (DSC VDO 1080x2400) | 4.19 de ruby + plantilla `panel-n11a-42-02-0a-dsc-vdo.c` |
+| Focaltech FT3680 por SPI3 | 4.19 de ruby + `focaltech_spi_v2.c` del árbol MTK |
+| cargadores `mp2762`, `ln8410`, `sc8561`, `bq25980`, `xmusb350`, `bq28z610`, `max77932` | 4.19 de ruby |
+| huella Goodix por SPI | 4.19 de ruby |
+| GNSS/consys | `vendor/mediatek/kernel_modules/connectivity/gps/*` (por localizar) |
+
+El panel ya está portado y compilándose en CI
+(`rubyx-kernel66-lab/port/display/`), y el TEEI 400 también.
 
 ## Caminos posibles
 
